@@ -70,7 +70,7 @@ export class Homework {
         }
     }
 }
-export class LessById {
+export class LessonById {
     static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
         const lesson = await Query.execute(`select subjId, date, theme from lessons where Id = ${req.query.id}`)
         if (lesson.length > 0) res.send(lesson[0])
@@ -207,7 +207,7 @@ export class JournSubj {
 }
 }
 }
-export class JournLessBySubj {
+export class JournLessonBySubj {
     static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
         const lessons = await Query.execute(`select Id, date, theme from lessons where subjId = ${req.query.subject}`)
         res.send(lessons)
@@ -235,7 +235,7 @@ export class JournHomById {
     }
 }
 }
-export class JournLessById {
+export class JournLessonById {
     static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
         const lesson = await Query.execute(`select subjId, date, theme from lessons where Id = ${req.query.id}`)
         if (lesson.length > 0) res.send(lesson[0])
