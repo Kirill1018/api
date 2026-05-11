@@ -1,14 +1,13 @@
 import sql from 'mssql'
-const subjTyp = ['passSubj', 'currSubj']
 const config = {
-    server: 'DESKTOP-NEUQAJ1\\SQLEXPRESS',
+    server: 'KIRILL\\SQLEXPRESS',
     database: 'electronic diary',
     options: { trustServerCertificate: true },
     user: 'sa',
     password: 'Sql-031'
 }
 const csrfProt = 'qwerty'
-const acSubj = ['passSubj', 'currSubj']
+const subjTyp = ['passSubj', 'currSubj']
 class Query {
     static async execute(query) {
         await sql.connect(config)
@@ -127,14 +126,14 @@ export class Work {
 }
 export class PassSubjOfJourn {
     static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
-        const passSubj = await Query.execute(`select Id, name, groupId, isArch from ${acSubj[0]} where isArch = 'false'`)
+        const passSubj = await Query.execute(`select Id, name, groupId, isArch from ${subjTyp[0]} where isArch = 'false'`)
         res.send(passSubj)
     }
 }
 }
 export class CurrSubjOfJourn {
     static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
-        const currSubj = await Query.execute(`select Id, name, groupId from ${acSubj[1]}`)
+        const currSubj = await Query.execute(`select Id, name, groupId from ${subjTyp[1]}`)
         res.send(currSubj)
     }
 }
@@ -200,7 +199,7 @@ export class JournLess {
 }
 }
 export class JournSubj {
-    static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) { for (let subjType of acSubj) {
+    static async get(req, res) { if (req.headers['csrf-prot'] === csrfProt) { for (let subjType of subjTyp) {
         const subject = await Query.execute(`select Id, name, groupId, userId from ${subjType} where Id = ${req.query.id}`)
         if (subject.length > 0) res.send(subject[0])
     }
@@ -252,7 +251,7 @@ export class Journal {
 }
 export class SubjArchOfJourn {
     static async post(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
-        await Query.execute(`update ${acSubj[0]} set isArch = 'true' where Id = ${req.body.id}`)
+        await Query.execute(`update ${subjTyp[0]} set isArch = 'true' where Id = ${req.body.id}`)
         res.send('предмет переведён в архивный статус')
     }
 }
@@ -260,7 +259,7 @@ export class SubjArchOfJourn {
 export class CurrSubjOfJournByName {
     static async post(req, res) { if (req.headers['csrf-prot'] === csrfProt) {
         const body = req.body
-        const currSubj = await Query.execute(`select Id from ${acSubj[1]} where name = '${body.name}' and groupId = ${body.groupId}`)
+        const currSubj = await Query.execute(`select Id from ${subjTyp[1]} where name = '${body.name}' and groupId = ${body.groupId}`)
         res.send(currSubj)
     }
 }
@@ -268,14 +267,14 @@ export class CurrSubjOfJournByName {
 export class EdJournSubj {
     static async post(req) { if (req.headers['csrf-prot'] === csrfProt) {
         const body = req.body
-        for (let subjects of acSubj) await Query.execute(`update ${subjects} set name = '${body.name}', groupId = ${body.groupId} where Id = ${body.id}`)
+        for (let subjects of subjTyp) await Query.execute(`update ${subjects} set name = '${body.name}', groupId = ${body.groupId} where Id = ${body.id}`)
     }
 }
 }
 export class AddJournSubj {
     static async post(req) { if (req.headers['csrf-prot'] === csrfProt) {
         const body = req.body
-        await Query.execute(`insert into ${acSubj[1]}(name, groupId, userId) values('${body.name}', ${body.groupId}, ${body.id})`)
+        await Query.execute(`insert into ${subjTyp[1]}(name, groupId, userId) values('${body.name}', ${body.groupId}, ${body.id})`)
     }
 }
 }
